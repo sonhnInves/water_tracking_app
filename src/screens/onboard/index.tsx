@@ -1,5 +1,5 @@
 import {View} from 'react-native';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {marginTopApp} from '../../utils/functions.ts';
 import {AppColors, ScreenName} from '../../shared/constants';
 import PagerView from 'react-native-pager-view';
@@ -14,7 +14,7 @@ import Step6 from './steps/step_6';
 import Step7 from './steps/step_7';
 import {navigate} from '../../utils/navigations.ts';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {getDBConnection, getImageUser} from "../../service/sqlite";
+import {createTableWater, getDBConnection, getImageUser} from "../../service/sqlite";
 import {TableName} from "../../service/tableName";
 
 const OnboardScreen = () => {
@@ -46,6 +46,7 @@ const OnboardScreen = () => {
             viewPager.current?.setPage(page);
             setCurrentIndex(page + 1);
         } else {
+            await createTableWater(db, TableName.WaterData);
             navigate({screen: ScreenName.HomeScreen});
         }
     };
