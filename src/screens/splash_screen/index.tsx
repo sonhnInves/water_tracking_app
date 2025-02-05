@@ -2,21 +2,20 @@ import {StyleSheet, View} from "react-native";
 import {AppColors, ScreenName} from "../../shared/constants";
 import {TextFontSemiBold} from "../../components/text";
 import {useEffect} from "react";
-import {checkTableExists, getDBConnection} from "../../service/sqlite";
-import {TableName} from "../../service/tableName";
 import {navigate} from "../../utils/navigations.ts";
 
 const SplashScreen = () => {
     useEffect(() => {
 
         const timeout = setTimeout(async () => {
-            const db = await getDBConnection()
-            const exists = await checkTableExists(db, TableName.ImageUser);
-            if (exists) {
-                navigate({screen: ScreenName.HomeScreen})
-            } else {
-                navigate({screen: ScreenName.OnboardScreen})
-            }
+            // const db = await getDBConnection()
+            // const exists = await checkTableExists(db, TableName.ImageUser);
+            // if (exists) {
+            //     navigate({screen: ScreenName.HomeScreen})
+            // } else {
+            //     navigate({screen: ScreenName.OnboardScreen})
+            // }
+            navigate({screen: ScreenName.OnboardScreen})
         }, 1000)
         return () => clearTimeout(timeout)
     }, []);

@@ -1,4 +1,5 @@
 export const TableName = {
     ImageUser: 'imageUser',
-    WaterData: 'WaterData'
+    WaterData: 'WaterData',
+    WaterHistory: 'WaterHistory',
 };

@@ -1,6 +1,7 @@
 import {enablePromise, openDatabase, SQLiteDatabase,} from 'react-native-sqlite-storage';
 import {ImageUser} from '../models';
 import {Image} from 'react-native';
+import {TableName} from "../tableName";
 
 enablePromise(true);
 
@@ -79,6 +80,90 @@ export const createTableWater = async (db: SQLiteDatabase, tableName: string) =>
         console.log('Table created successfully');
     } catch (error) {
         console.error('Error initializing database:', error);
+    }
+};
+
+export const saveDailyWaterData = async (data: {
+    [date: string]: { achieved: boolean; dailyTotalWater: number } | number;
+}) => {
+    try {
+        const database = await getDBConnection();
+
+        for (const [key, value] of Object.entries(data)) {
+            if (typeof value === 'object') {
+                const {achieved, dailyTotalWater} = value as {
+                    achieved: boolean;
+                    dailyTotalWater: number;
+                };
+                await database.executeSql(
+                    `
+          INSERT OR REPLACE INTO ${TableName.WaterData} (date, achieved, dailyTotalWater)
+          VALUES (?, ?, ?)
+          `,
+                    [key, achieved ? 1 : 0, dailyTotalWater]
+                );
+            } else {
+                // Handle numeric keys (e.g., achievedGoalDays, dailyGoal)
+                if (key === 'achievedGoalDays' || key === 'dailyGoal') {
+                    await database.executeSql(
+                        `
+            INSERT OR REPLACE INTO WaterData (date, achievedGoalDays, dailyGoal)
+            VALUES (?, ?, ?)
+            `,
+                        ['meta', data.achievedGoalDays, data.dailyGoal]
+                    );
+                }
+            }
+        }
+        console.log('Data saved successfully');
+    } catch (error) {
+        console.error('Error saving data:', error);
+    }
+};
+
+export const getDailyWaterData = async () => {
+    try {
+        const database = await getDBConnection();
+        const results = await database.executeSql(`SELECT * FROM ${TableName.WaterData}`);
+        const rows = results[0].rows;
+        const data: any = {};
+
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows.item(i);
+            if (row.date === 'meta') {
+                data.achievedGoalDays = row.achievedGoalDays;
+                data.dailyGoal = row.dailyGoal;
+            } else {
+                data[row.date] = {
+                    achieved: !!row.achieved,
+                    dailyTotalWater: row.dailyTotalWater,
+                };
+            }
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error retrieving data:', error);
+        return null;
+    }
+};
+
+export const createWaterHistory = async () => {
+    try {
+        const database = await getDBConnection();
+
+        // Tạo bảng `History` để lưu lịch sử
+        await database.executeSql(`
+      CREATE TABLE IF NOT EXISTS ${TableName.WaterHistory} (
+        date TEXT PRIMARY KEY,
+        achievedGoal INTEGER,
+        dailyTotalWater INTEGER,
+        dailyGoal INTEGER
+      )
+    `);
+        console.log('Table created successfully');
+    } catch (error) {
+        console.error('Error created database:', error);
     }
 };
 

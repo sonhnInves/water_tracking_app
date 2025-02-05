@@ -1,6 +1,6 @@
 import {View} from 'react-native';
 import React, {useCallback, useState} from 'react';
-import {marginTopApp} from '../../utils/functions.ts';
+import {DateUtil, marginTopApp} from '../../utils/functions.ts';
 import {AppColors, ScreenName} from '../../shared/constants';
 import PagerView from 'react-native-pager-view';
 import {BaseButton} from 'react-native-gesture-handler';
@@ -14,8 +14,9 @@ import Step6 from './steps/step_6';
 import Step7 from './steps/step_7';
 import {navigate} from '../../utils/navigations.ts';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {createTableWater, getDBConnection, getImageUser} from "../../service/sqlite";
+import {createTableWater, getDBConnection, getImageUser, saveDailyWaterData} from "../../service/sqlite";
 import {TableName} from "../../service/tableName";
+import {getUpdatedAddWaterAmountData} from "../home/utils.ts";
 
 const OnboardScreen = () => {
     const viewPager = React.createRef<PagerView>();
@@ -40,6 +41,13 @@ const OnboardScreen = () => {
     const handleNextPage = async () => {
         const db = await getDBConnection();
         const storedImage = await getImageUser(db, TableName.ImageUser);
+        const today = DateUtil.today()
+        const dataDefault = {
+            achievedGoalDays: 0, dailyGoal: 2000, [today]: {
+                dailyTotalWater: 0,
+                achieved: false,
+            },
+        }
         if (page === 5 && JSON.stringify(storedImage) === '{}') return;
         if (page !== data.length - 1) {
             setPage(page + 1);
@@ -47,6 +55,8 @@ const OnboardScreen = () => {
             setCurrentIndex(page + 1);
         } else {
             await createTableWater(db, TableName.WaterData);
+            const updatedData = getUpdatedAddWaterAmountData(dataDefault, 0);
+            await saveDailyWaterData(updatedData)
             navigate({screen: ScreenName.HomeScreen});
         }
     };

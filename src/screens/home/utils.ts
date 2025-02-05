@@ -61,7 +61,7 @@ export const getUpdatedAddWaterAmountData = (
 export const getUpdatedRemoveWaterAmountData = (
     data: BodyData & { achievedGoalDays: number },
     amount: number
-): BodyData & { achievedGoalDays: number } => {
+): UpdatedBodyData => {
     const today = DateUtil.today(); // Get today's date as a key
     const todayData = data[today]; // Get today's data
 

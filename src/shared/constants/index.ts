@@ -6,6 +6,7 @@ export const ScreenName = {
     Main: 'Main',
     BottomNavigationScreen: 'BottomNavigationScreen',
     SplashScreen: 'SplashScreen',
+    HistoryScreen: 'HistoryScreen',
 };
 
 export const AppColors = {

@@ -24,3 +24,7 @@ export class DateUtil {
     static today = () => moment().format('YYYY/MM/DD')
     static tomorrow = () => moment().add(1, 'days').format('YYYY/MM/DD')
 }
+
+export class FormatDateUtils {
+    static eeDDMMYYYY = (date: string) => moment(date, "YYYY/MM/DD").format("ddd, DD-MM-YYYY");
+}

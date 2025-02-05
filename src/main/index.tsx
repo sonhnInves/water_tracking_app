@@ -10,6 +10,7 @@ import {getDBConnection, getImageUser} from "../service/sqlite";
 import {TableName} from "../service/tableName";
 import {ImageUser} from "../service/models";
 import SplashScreen from "../screens/splash_screen";
+import HistoryScreen from "../screens/history";
 
 const Stack = createStackNavigator();
 
@@ -39,6 +40,11 @@ const MainApp = () => {
                     <Stack.Screen
                         name={ScreenName.HomeScreen}
                         component={HomeScreen}
+                        options={{gestureEnabled: false}}
+                    />
+                    <Stack.Screen
+                        name={ScreenName.HistoryScreen}
+                        component={HistoryScreen}
                         options={{gestureEnabled: false}}
                     />
                 </Stack.Navigator>
